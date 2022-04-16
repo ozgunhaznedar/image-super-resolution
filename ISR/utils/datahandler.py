@@ -156,7 +156,7 @@ class DataHandler:
         )
         return t_batch
     
-    def get_batch(self, batch_size, idx=None, flatness=0.0 , custom_scaling=False):
+    def get_batch(self, batch_size, idx=None, flatness=0.0 , custom_scaling):
         """
         Returns a dictionary with keys ('lr', 'hr') containing training batches
         of Low Res and High Res image patches.
