@@ -102,7 +102,7 @@ class Predictor:
             self.logger.info('Result in: {}'.format(output_path))
             imageio.imwrite(output_path, sr_img)
 
-    def _forward_pass(self, file_path , custom_scaling):
+    def _forward_pass(self, file_path , custom_scaling=True):
         #custom scaling : boolean , True for landsat scaling 
         if custom_scaling:
             lr_img = ((imageio.imread(file_path).astype(int)*0.0000275-0.2)*255*4).astype(int)
