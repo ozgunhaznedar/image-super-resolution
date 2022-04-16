@@ -156,7 +156,7 @@ class DataHandler:
         )
         return t_batch
     
-    def get_batch(self, batch_size, idx=None, flatness=0.0):
+    def get_batch(self, batch_size, idx=None, flatness=0.0 , custom_scaling=False):
         """
         Returns a dictionary with keys ('lr', 'hr') containing training batches
         of Low Res and High Res image patches.
@@ -171,9 +171,23 @@ class DataHandler:
             # randomly select one image. idx is given at validation time.
             idx = np.random.choice(range(len(self.img_list['hr'])))
         img = {}
-        for res in ['lr', 'hr']:
+        if custom_scaling: 
+          for res in ['lr', 'hr']:
             img_path = os.path.join(self.folders[res], self.img_list[res][idx])
-            img[res] = imageio.imread(img_path) / 255.0
+
+            # different normalization for landsat and sentinel images
+            if res == 'lr':
+              img[res] = ((imageio.imread(img_path).astype(int)*0.0000275-0.2)*255*4).astype(int) #landsat
+            else:
+              img[res] = ((imageio.imread(img_path).astype(int)*255/3558)*1.4).astype(int) #sentinel
+
+            img[res][img[res]>255] = 255
+            img[res][img[res]<0] = 0
+            img[res] = img[res] / 255.0
+        else: 
+            for res in ['lr', 'hr']:
+                img_path = os.path.join(self.folders[res], self.img_list[res][idx])
+                img[res] = imageio.imread(img_path) / 255.0
         batch = self._crop_imgs(img, batch_size, flatness)
         transforms = np.random.randint(0, 3, (batch_size, 2))
         batch['lr'] = self._transform_batch(batch['lr'], transforms)
