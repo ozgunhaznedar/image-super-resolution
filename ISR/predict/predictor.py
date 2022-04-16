@@ -40,7 +40,7 @@ class Predictor:
         self.logger = get_logger(__name__)
         if not verbose:
             self.logger.setLevel(40)
-        self.extensions = ('.jpeg', '.jpg', '.png')  # file extensions that are admitted
+        self.extensions = ('.jpeg', '.jpg', '.png', '.tif')  # file extensions that are admitted
         self.img_ls = [f for f in self.input_dir.iterdir() if f.suffix in self.extensions]
         if len(self.img_ls) < 1:
             self.logger.error('No valid image files found (check config file).')
