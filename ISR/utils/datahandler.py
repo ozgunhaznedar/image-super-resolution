@@ -172,18 +172,18 @@ class DataHandler:
             idx = np.random.choice(range(len(self.img_list['hr'])))
         img = {}
         if custom_scaling: 
-          for res in ['lr', 'hr']:
-            img_path = os.path.join(self.folders[res], self.img_list[res][idx])
+            for res in ['lr', 'hr']:
+                img_path = os.path.join(self.folders[res], self.img_list[res][idx])
 
-            # different normalization for landsat and sentinel images
-            if res == 'lr':
-              img[res] = ((imageio.imread(img_path).astype(int)*0.0000275-0.2)*255*4).astype(int) #landsat
-            else:
-              img[res] = ((imageio.imread(img_path).astype(int)*255/3558)*1.4).astype(int) #sentinel
+                # different normalization for landsat and sentinel images
+                if res == 'lr':
+                  img[res] = ((imageio.imread(img_path).astype(int)*0.0000275-0.2)*255*4).astype(int) #landsat
+                else:
+                  img[res] = ((imageio.imread(img_path).astype(int)*255/3558)*1.4).astype(int) #sentinel
 
-            img[res][img[res]>255] = 255
-            img[res][img[res]<0] = 0
-            img[res] = img[res] / 255.0
+                img[res][img[res]>255] = 255
+                img[res][img[res]<0] = 0
+                img[res] = img[res] / 255.0
         else: 
             for res in ['lr', 'hr']:
                 img_path = os.path.join(self.folders[res], self.img_list[res][idx])
