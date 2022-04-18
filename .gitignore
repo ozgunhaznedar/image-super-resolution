@@ -4,6 +4,8 @@
 # images
 *.tif
 *.png
+*.zip
+
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
