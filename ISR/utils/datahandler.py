@@ -9,7 +9,6 @@ from ISR.utils.logger import get_logger
 class DataHandler:
     """
     DataHandler generate augmented batches used for training or validation.
-
     Args:
         lr_dir: directory containing the Low Res images.
         hr_dir: directory containing the High Res images.
@@ -21,7 +20,7 @@ class DataHandler:
     
     def __init__(self, lr_dir, hr_dir, patch_size, scale, n_validation_samples=None):
         self.folders = {'hr': hr_dir, 'lr': lr_dir}  # image folders
-        self.extensions = ('.png', '.jpeg', '.jpg',".tif")  # admissible extension
+        self.extensions = ('.png', '.jpeg', '.jpg')  # admissible extension
         self.img_list = {}  # list of file names
         self.n_validation_samples = n_validation_samples
         self.patch_size = patch_size
@@ -156,11 +155,10 @@ class DataHandler:
         )
         return t_batch
     
-    def get_batch(self, batch_size, idx=None, flatness=0.0 , custom_scaling=True):
+    def get_batch(self, batch_size, idx=None, flatness=0.0):
         """
         Returns a dictionary with keys ('lr', 'hr') containing training batches
         of Low Res and High Res image patches.
-
         Args:
             batch_size: integer.
             flatness: float in [0,1], is the patch "flatness" threshold.
@@ -171,23 +169,9 @@ class DataHandler:
             # randomly select one image. idx is given at validation time.
             idx = np.random.choice(range(len(self.img_list['hr'])))
         img = {}
-        if custom_scaling: 
-            for res in ['lr', 'hr']:
-                img_path = os.path.join(self.folders[res], self.img_list[res][idx])
-
-                # different normalization for landsat and sentinel images
-                if res == 'lr':
-                  img[res] = ((imageio.imread(img_path).astype(int)*0.0000275-0.2)*255*4).astype(int) #landsat
-                else:
-                  img[res] = ((imageio.imread(img_path).astype(int)*255/3558)*1.4).astype(int) #sentinel
-
-                img[res][img[res]>255] = 255
-                img[res][img[res]<0] = 0
-                img[res] = img[res] / 255.0
-        else: 
-            for res in ['lr', 'hr']:
-                img_path = os.path.join(self.folders[res], self.img_list[res][idx])
-                img[res] = imageio.imread(img_path) / 255.0
+        for res in ['lr', 'hr']:
+            img_path = os.path.join(self.folders[res], self.img_list[res][idx])
+            img[res] = imageio.imread(img_path) / 255.0
         batch = self._crop_imgs(img, batch_size, flatness)
         transforms = np.random.randint(0, 3, (batch_size, 2))
         batch['lr'] = self._transform_batch(batch['lr'], transforms)
