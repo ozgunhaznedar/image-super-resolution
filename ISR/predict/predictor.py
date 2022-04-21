@@ -11,21 +11,17 @@ from ISR.utils.utils import get_timestamp
 
 class Predictor:
     """The predictor class handles prediction, given an input model.
-
     Loads the images in the input directory, executes training given a model
     and saves the results in the output directory.
     Can receive a path for the weights or can let the user browse through the
     weights directory for the desired weights.
-
     Args:
         input_dir: string, path to the input directory.
         output_dir: string, path to the output directory.
         verbose: bool.
-
     Attributes:
         extensions: list of accepted image extensions.
         img_ls: list of image files in input_dir.
-
     Methods:
         get_predictions: given a model and a string containing the weights' path,
             runs the predictions on the images contained in the input directory and
@@ -102,14 +98,8 @@ class Predictor:
             self.logger.info('Result in: {}'.format(output_path))
             imageio.imwrite(output_path, sr_img)
 
-    def _forward_pass(self, file_path , custom_scaling=True):
-        #custom scaling : boolean , True for landsat scaling 
-        if custom_scaling:
-            lr_img = ((imageio.imread(file_path).astype(int)*0.0000275-0.2)*255*4).astype(int)
-            lr_img[lr_img>255] = 255
-            lr_img[lr_img<0] = 0
-        else:
-            lr_img = imageio.imread(file_path)
+    def _forward_pass(self, file_path):
+        lr_img = imageio.imread(file_path)
         if lr_img.shape[2] == 3:
             sr_img = self.model.predict(lr_img)
             return sr_img
