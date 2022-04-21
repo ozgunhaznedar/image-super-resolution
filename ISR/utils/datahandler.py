@@ -20,7 +20,7 @@ class DataHandler:
     
     def __init__(self, lr_dir, hr_dir, patch_size, scale, n_validation_samples=None):
         self.folders = {'hr': hr_dir, 'lr': lr_dir}  # image folders
-        self.extensions = ('.png', '.jpeg', '.jpg')  # admissible extension
+        self.extensions = ('.png', '.jpeg', '.jpg', '.tif')  # admissible extension
         self.img_list = {}  # list of file names
         self.n_validation_samples = n_validation_samples
         self.patch_size = patch_size
